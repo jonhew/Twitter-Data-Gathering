@@ -14,11 +14,20 @@ api = twitter.Api(
 file = raw_input("Please enter name of file: ")
 outfile = open(file + ".csv", "wb" )
 writer = csv.writer(outfile)
-search = api.GetSearch(term='#hail', lang='en', result_type='recent', count=100, max_id='')
+i = ''
+p = 0
+#max sets total number of tweets returned
+max = 100
+while p<max:
+    search = api.GetSearch(term='umich', lang='en', count='100', result_type='recent', max_id=i)
+    i = search[0].id
+    for t in search:
+        #Add the .encode to force encoding
+        writer.writerow([t.user.screen_name,t.created_at,t.retweet_count,t.id,t.text.encode('utf-8')])
+        if(t.id < i): i = t.id
+    p = p+1
 
-for t in search:
-    #Add the .encode to force encoding
-    writer.writerow([t.user.screen_name,t.created_at,t.text.encode('utf-8')])
+
 print "DONE!"
 outfile.close()
 
