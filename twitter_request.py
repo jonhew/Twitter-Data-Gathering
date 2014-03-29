@@ -18,16 +18,17 @@ i = ''
 p = 0
 #max sets total number of tweets returned
 max = 100
+print "in progress...",
 while p<max:
     search = api.GetSearch(term='umich', lang='en', count='100', result_type='recent', max_id=i)
     i = search[0].id
     for t in search:
-        #Add the .encode to force encoding
-        writer.writerow([t.user.screen_name,t.created_at,t.retweet_count,t.id,t.text.encode('utf-8')])
+        #remove duplicate retweets
+        if "RT" not in t.text:
+            writer.writerow([t.user.screen_name,t.created_at,t.retweet_count,t.favorite_count,t.text.encode('utf-8')])
         if(t.id < i): i = t.id
+    print p,
     p = p+1
-
-
 print "DONE!"
 outfile.close()
 
